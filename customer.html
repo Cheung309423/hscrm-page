@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客户信息</title>
+
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table tr {
+            font-size: 16px;
+            margin: 10px;
+            text-align: center;
+        }
+
+        th {
+            height: 30px;
+        }
+
+        table tr td {
+            height: 30px;
+            border: 1px solid gray;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        #first {
+            font-weight: bold;
+            background-color: rgb(200, 200, 200);
+            border-collapse: collapse;
+        }
+
+        th {
+            padding-bottom: 4px;
+        }
+
+        #first th {
+            border: 1px solid gray;
+            padding-top: 5px;
+
+            color: black;
+        }
+
+        b {
+            display: inline-block;
+            width: 20px;
+        }
+
+
+        .sc {
+            background-color: rgb(0, 119, 237);
+            border: 3px outset rgb(91, 157, 223);
+            color: whitesmoke;
+            padding: 2px 18px;
+            font-size: 14px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 15px;
+
+        }
+
+        .sc:hover {
+            border-radius: 10px;
+            background-color: #f44336;
+            border: 3px outset red;
+            transition: 0.4s;
+            -webkit-transition: 0.4s;
+        }
+
+        .xg {
+
+            background-color: rgb(0, 119, 237);
+            border: 3px outset rgb(91, 157, 223);
+            color: whitesmoke;
+            padding: 2px 18px;
+            font-size: 14px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 15px;
+
+        }
+
+        .xg:hover {
+            border-radius: 10px;
+            background-color: #4CAF50;
+            border: 3px outset yellowgreen;
+            transition: 0.4s;
+            -webkit-transition: 0.4s;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>客户信息</h1>
+    <hr>
+    <table>
+        <tr id="first">
+            <th>客户编号</th>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>电话</th>
+            <th>职位</th>
+            <th>所属公司</th>
+            <th>操作</th>
+        </tr>
+    </table>
+
+
+    <script src="js/jquery-3.6.0.js"></script>
+    <script>
+        var token = localStorage.getItem("token");
+        $.ajax({
+            headers: { token: token },
+            async: false,
+            url: "http://localhost:8080/hscrm/user/customer",
+            data: { action: "findAll" },
+            type: "get",
+            success: function (respTxt) {
+                var customers = respTxt.data;
+                for (var cus of customers) {
+                    var tr = $("<tr></tr>");
+                    var td1 = $("<td>" + cus.c_id + "</td>");
+                    var td2 = $("<td>" + cus.c_name + "</td>");
+                    var td3 = $("<td>" + cus.c_sex + "</td>");
+                    var td4 = $("<td>" + cus.c_tel + "</td>");
+                    var td5 = $("<td>" + cus.c_job + "</td>");
+                    var td6 = $("<td>" + cus.c_company + "</td>");
+                    var td7 = $("<td><button class='sc'>删除</button><b></b><button class='xg'>修改</button></td>");
+
+                    tr.append(td1);
+                    tr.append(td2);
+                    tr.append(td3);
+                    tr.append(td4);
+                    tr.append(td5);
+                    tr.append(td6);
+                    tr.append(td7);
+
+                    $("table").append(tr);
+                }
+            }
+        });
+
+        // 删除
+        $(".sc").click(function () {
+            var flag = window.confirm("真的要删除吗？");
+            if (!flag) {
+                return;
+            }
+
+            // 兄弟元素
+            var td = $(this).parent().prevAll().last();
+            var c_id = td.html();
+
+            $.ajax({
+                headers: {
+                    token: token
+                },
+                url: "http://localhost:8080/hscrm/user/customer",
+                type: "post",
+                data: {
+                    action: "delete",
+                    c_id: c_id
+                },
+                success: function (respTxt) {
+                    if (respTxt.code == 1000) {
+                        var tr = td.parent();
+                        tr.remove();
+                    }else{
+                        alert(respTxt.message);
+                    }
+                }
+            })
+        });
+
+        // 修改
+        $(".xg").click(function () {
+            // 兄弟元素
+            var td = $(this).parent().prevAll().last();
+            var c_id = td.html();
+            location.href = "updateCustomer.html?c_id=" + c_id;
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加客户</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+        }
+
+        body {
+            background-image: url("images/job.png");
+        }
+
+        #addCus {
+            background-image: url("images/jobs.png");
+            background-repeat: no-repeat;
+            border: 0.5px solid rgb(210, 210, 215);
+            box-shadow: 0 1px 5px rgb(210, 210, 215);
+            border-radius: 15px;
+            width: 600px;
+            text-align: center;
+            margin: 0 auto;
+            margin-top: 65px;
+            margin-bottom: 55px;
+            padding: 20px;
+        }
+
+        #addCus span {
+            display: inline-block;
+            width: 80px;
+            text-align: left;
+            height: 40px;
+            line-height: 40px;
+        }
+
+        #addCus input {
+            padding: 5px;
+            border: 0.5px solid rgb(210, 210, 215);
+            border-radius: 5px;
+            display: inline-block;
+            width: 320px;
+            height: 32px;
+            margin: 10px;
+        }
+
+        #addCus input:hover {
+            border: 0.5px solid rgb(76, 153, 231);
+            background-color: white;
+            transition: 1s;
+            -webkit-transition: 1s;
+        }
+
+
+
+
+        #addCus h1 {
+            font-size: 24px;
+            margin-bottom: 25px;
+        }
+
+        #addCus h1 b {
+            display: inline-block;
+            width: 40px;
+        }
+
+        #addCus #btn {
+            height: 40px;
+            width: 100px;
+            margin-left: 28px;
+            background-color: rgb(250, 250, 250);
+        }
+
+        #addCus #btn:hover {
+            height: 40px;
+            border-radius: 10px;
+            width: 200px;
+            margin-left: 28px;
+            border: 3px solid rgb(102, 177, 252);
+            color: whitesmoke;
+            background-color: rgb(0, 119, 237);
+            transition: 0.4s;
+            -webkit-transition: 0.4s;
+        }
+
+        #addCus .dx {
+            width: 15px;
+            height: 15px;
+        }
+
+        #addCus .dx:hover {
+            width: 15px;
+            height: 15px;
+        }
+
+        b {
+            display: inline-block;
+            width: 15px;
+        }
+
+        #sex {
+            text-align: left;
+            margin-left: -200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="addCus">
+        <span>客户姓名：</span><input type="text" id="c_name"><br>
+        <span id="sex">性别：</span><b></b><input class="dx" type="radio" id="c_sex" name="c_sex" value="男" checked>男
+        <b></b><input class="dx" type="radio" name="c_sex" value="女">女<br>
+        <span>电话：</span><input type="text" id="c_tel"><br>
+        <span>职位：</span><input type="text" id="c_job"><br>
+        <span>公司：</span><input type="text" id="c_company"><br>
+
+        <input type="button" id="btn" value="添加新客户">
+    </div>
+
+    <script src="js/jquery-3.6.0.js"></script>
+    <script>
+        $("#btn").click(function () {
+            var c_name = $("#c_name").val();
+            var sex = $("input[name='c_sex']:checked").val();
+            var c_tel = $("#c_tel").val();
+            var c_job = $("#c_job").val();
+            var c_company = $("#c_company").val();
+
+            // 请求
+            var token = localStorage.getItem("token");
+            $.ajax({
+                headers: { token: token },
+                url: "http://localhost:8080/hscrm/user/customer",
+                type: "post",
+                data: {
+                    action: "add",
+                    c_name: c_name,
+                    c_sex: sex,
+                    c_tel: c_tel,
+                    c_job: c_job,
+                    c_company: c_company
+                },
+                success: function (respTxt) {
+                    alert(respTxt.message);
+                    if(respTxt.code == 1000) {
+                        location.href = "customer.html"
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

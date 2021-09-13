@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册页面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+        }
+
+        body {
+            background-color: transparent;
+        }
+
+        header {
+            padding-top: 0;
+            padding: auto;
+            height: 50px;
+            width: auto;
+            line-height: 50px;
+            background-color: rgb(39, 40, 44);
+            color: white;
+        }
+
+        header h1 {
+            margin-left: 20px;
+            font-size: 20px;
+            float: left;
+        }
+
+
+        #center {
+            background-color: transparent;
+            border: 0.5px solid rgb(210, 210, 215);
+            box-shadow: 0 1px 5px rgb(210, 210, 215);
+            border-radius: 15px;
+            width: 600px;
+            text-align: center;
+            margin: 0 auto;
+            margin-top: 50px;
+            margin-bottom: 55px;
+            padding: 20px;
+        }
+
+        #center span {
+            display: inline-block;
+            width: 80px;
+            text-align: left;
+            height: 40px;
+            line-height: 40px;
+        }
+
+        #center input {
+            padding: 5px;
+            border: 0.5px solid rgb(210, 210, 215);
+            border-radius: 5px;
+            display: inline-block;
+            width: 320px;
+            height: 32px;
+            margin: 10px;
+        }
+
+        #center input:hover {
+            border: 0.5px solid rgb(76, 153, 231);
+            background-color: white;
+            transition: 1s;
+            -webkit-transition: 1s;
+        }
+
+
+
+
+        #center h1 {
+            font-size: 24px;
+            margin-bottom: 25px;
+        }
+
+        #center h1 b {
+            display: inline-block;
+            width: 40px;
+        }
+
+        #center #btn {
+            height: 40px;
+            width: 100px;
+            margin-left: 28px;
+            background-color: rgb(250, 250, 250);
+        }
+
+        #center #btn:hover {
+            height: 40px;
+            border-radius: 10px;
+            width: 260px;
+            margin-left: 28px;
+            border: 3px solid rgb(102, 177, 252);
+            color: whitesmoke;
+            background-color: rgb(0, 119, 237);
+            transition: 0.4s;
+            -webkit-transition: 0.4s;
+        }
+
+        body #footer {
+            margin: 10px;
+            clear: both;
+            padding: 10px;
+            text-align: center;
+            border-top: 0.5px solid rgb(210, 210, 215);
+            width: auto;
+            color: rgb(104, 101, 91);
+            background-color: white;
+            height: 20px;
+
+        }
+
+        body #footer p {
+            line-height: 20px;
+            display: inline;
+        }
+
+        #center .dx {
+            width: 15px;
+            height: 15px;
+        }
+
+        #center .dx:hover {
+            width: 15px;
+            height: 15px;
+        }
+
+        b {
+            display: inline-block;
+            width: 15px;
+        }
+
+        #sex {
+            text-align: left;
+            margin-left: -220px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>华杉CRM客户管理</h1>
+    </header>
+
+    <div id="center">
+        <h1>新员工注册</h1>
+        <span>用户名：</span><input type="text" id="username"><br>
+        <span>密码：</span><input type="password" id="passwd"><br>
+        <span>确认密码：</span><input type="password" id="passwd2"><br>
+        <span>姓名：</span><input type="text" id="e_name"><br>
+        <span id="sex">性别：</span><b></b><input class="dx" type="radio" id="e_sex" name="e_sex" checked>男
+        <b></b><input class="dx" type="radio" name="e_sex">女<br>
+
+        <span>电话：</span><input type="text" id="e_tel"><br>
+        <input type="button" id="btn" value="注册">
+    </div>
+
+    <div id="footer">
+        <p>Copyright © 2000-2021 HS s.r.o.</p>
+        <p>版权归华杉所有</p>
+    </div>
+
+    <script src="js/jquery-3.6.0.js"></script>
+    <script>
+        $("#btn").click(function () {
+            var username = $("#username").val();
+            var passwd = $("#passwd").val();
+            var passwd2 = $("#passwd2").val();
+            var e_name = $("#e_name").val();
+            var dx = $(".dx");
+            if (dx.get(0).checked) {
+                e_sex = "男";
+            } else {
+                e_sex = "女";
+            }
+            var e_tel = $("#e_tel").val();
+
+
+            // 数据校验
+            if (passwd != passwd2) {
+                $(document).ready(function () {
+                    $("#passwd2").after("<br><p style='color:red;display:inline;'>两次密码不一致</p>");
+                });
+                return;
+            }
+
+
+            // 发送请求
+            $.ajax({
+                url: "http://localhost:8080/hscrm/reg",
+                type: "post",
+                data: { username: username, passwd: passwd, e_name: e_name, e_sex: e_sex, e_tel: e_tel },
+                success: function (respTxt) {
+                    if (respTxt.code == 1000) {
+                        alert(respTxt.message + "，注册成功");
+                        location.href = "login.html";
+                    } else {
+                        $(document).ready(function () {
+                            $("#e_tel").after("<br><p style='color:red;display:inline;'>" + respTxt.message + "，注册失败" + "</p>");
+                        });
+                    }
+                }
+            })
+        });
+
+
+        // 用户名失去焦点时校验
+        $("#username").blur(function () {
+            var username = $("#username").val();
+            username = username.trim();
+            // 数据校验
+            if (username == "" || username == null) {
+                $(document).ready(function () {
+                    $("#username").after("<br><p style='color:red;display:inline;'>用户名不能为空</p>");
+                });
+            }
+
+            // 发送请求
+            $.ajax({
+                url: "http://localhost:8080/hscrm/usernameUnique",
+                type: "post",
+                data: { username: username },
+                success: function (respTxt) {
+                    if (respTxt.code == 1003) {
+                        $(document).ready(function () {
+                            $("#username").after("<br><p style='color:red;display:inline;'>这个用户名太火热了，请换一个吧</p>");
+                        });
+                    }
+                }
+            })
+        });
+    </script>
+</body>
+
+</html>
